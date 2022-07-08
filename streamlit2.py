@@ -1,12 +1,12 @@
 
 import streamlit as st
-import plotly.figure_factory as ff
+
 import matplotlib.pyplot as plt
-from plotly.figure_factory import create_distplot
+
 import pandas as pd 
 import numpy as np
 import seaborn as sns
-from pandas.plotting import andrews_curves
+
 
 
 st.title('Iris Dataframe & Graph')
