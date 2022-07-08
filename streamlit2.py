@@ -11,7 +11,7 @@ import seaborn as sns
 
 st.title('Iris Dataframe & Graph')
 
-data = pd.read_csv('iris.csv')
+data = pd.read_csv('https://raw.githubusercontent.com/Abzun/streamlit-example/master/Iris.csv')
 box_data = data[["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]]
 columns = data.columns.tolist()
 #st.write(columns)
