@@ -56,12 +56,17 @@ def main():
     
     output = ''
     
-    if st.button('Magic Price Predictor-gizmo'):
-        output = price_prediction([postcode, bedroom_number, bathroom_number,
-                                   price_per_unit, living_space, sqft])
+     if st.button('Magic Price Predictor-gizmo'):
+        output = np.array(price_prediction([postcode, bedroom_number, bathroom_number,
+                                   price_per_unit, living_space, sqft]))
         st.success(round(output[0],2))
-        st.dataframe(hh(output[0]))
-        
+        st.info('These are houses with the similar Price point, I rounded to the nearest Ten Thousands')
+        st.dataframe(hh(round(output[0],-4)))
+
+    st.info('When you get a price predicted, youll also be given other addresses based off the price point')
+    st.info('To Do: Obviously to make it prettier, maybe compare learning models with different attributes. Im thinking of doing a simplier model to just do prediction based off of just Sqft')
+    st.info('To Do: maybe just have options to see just LI houses. fitler panda')
+    st.info('To Do: yesss')
     
 if __name__ == '__main__':
     main()
