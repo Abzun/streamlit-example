@@ -16,7 +16,7 @@ import sklearn
 loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
 
 #loading in the data frame to usage 
-data_ny = pd.read_csv('zillow NY for-sale properties.csv')
+data_ny = pd.read_csv('https://raw.githubusercontent.com/Abzun/streamlit-example/master/zillow%20NY%20for-sale%20properties.csv')
 housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
                              ,'broker_id','property_status'
                              , 'year_build', 'total_num_units', 'listing_age'
