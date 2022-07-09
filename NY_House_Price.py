@@ -15,6 +15,14 @@ import sklearn
 #loading Model
 loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
 
+#loading in the data frame to usage 
+data_ny = pd.read_csv('zillow NY for-sale properties.csv')
+housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
+                             ,'broker_id','property_status'
+                             , 'year_build', 'total_num_units', 'listing_age'
+                             ,'RunDate', 'agency_name', 'agent_name', 'agent_phone'
+                             ,'is_owned_by_zillow','state','property_type']) # unnecessary columns removed
+
 #function for using model
 def hh(g):
     h = housey.loc[housey['price'] == g]
