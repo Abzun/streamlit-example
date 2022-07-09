@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import pickle
 
 #loading Model
-loaded_model = pickle.load(open(r'C:\Users\Edwin\Downloads\ny_model_lm.sav','rb'))
+loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
 
 #function for using model
 
