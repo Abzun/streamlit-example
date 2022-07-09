@@ -52,7 +52,8 @@ def main():
         output = price_prediction([postcode, bedroom_number, bathroom_number,
                                    price_per_unit, living_space, sqft])
         st.success(round(output[0],2))
-        st.dataframe(hh(output[0])
+        st.dataframe(hh(output[0]))
+        
     
 if __name__ == '__main__':
     main()
