@@ -4,4 +4,3 @@ streamlit==1.10.0
 matplotlib>=3.4
 seaborn==0.11.2
 numpy==1.21.5
-pickle>=2.0
