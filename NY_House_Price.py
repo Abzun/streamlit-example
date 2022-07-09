@@ -63,7 +63,7 @@ def main():
         st.success(round(output[0],2))
         st.info('These are houses with the similar Price point, I rounded to the nearest Ten Thousands')
         st.dataframe(hh(round(output[0],-4)))
-
+    st.warning('Check with zillow too, I found that the houses are  about +/- $20k from what the model Prediction - Let me know if its stupid off')    
     st.info('When you get a price predicted, youll also be given other addresses based off the price point')
     st.info('To Do: Obviously to make it prettier, maybe compare learning models with different attributes. Im thinking of doing a simplier model to just do prediction based off of just Sqft')
     st.info('To Do: maybe just have options to see just LI houses. fitler panda')
