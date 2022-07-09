@@ -40,6 +40,8 @@ def main():
 
     st.info('When house plan sellers refer to Total Living square feet, they are referring to the “living area” of the home. This can be thought of as the area that will be heated or cooled. It is called the living area because this is where you spend your time. An attic, while a useful storage area, is not living space.')
     living_space = st.number_input('Enter Living Space')
+    st.info('I think try to keep living space 60%-80% of the Sqft of the Property ')
+ 
     sqft = st.number_input('Enter Sqft of Property')
     
     output = ''
