@@ -10,6 +10,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import pickle
+import sklearn
 
 #loading Model
 loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
