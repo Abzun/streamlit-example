@@ -16,7 +16,9 @@ import sklearn
 loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
 
 #function for using model
-
+def hh(g):
+    h = housey.loc[housey['price'] == g]
+    return h
 def price_prediction(input_data):
     new_data = np.array(input_data, ndmin = 2)
     new_dataframe = pd.DataFrame(new_data, columns = ['postcode', 'bedroom_number', 'bathroom_number',
@@ -50,6 +52,7 @@ def main():
         output = price_prediction([postcode, bedroom_number, bathroom_number,
                                    price_per_unit, living_space, sqft])
         st.success(round(output[0],2))
+        st.dataframe(hh(output[0])
     
 if __name__ == '__main__':
     main()
