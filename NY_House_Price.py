@@ -36,6 +36,7 @@ def price_prediction(input_data):
     return prediction
 
 def main():
+    
     st.title('NY House Prizing!!1 EXTRAVAGANZA ')
     
     #INPUTS FROM USER
@@ -56,7 +57,7 @@ def main():
     
     output = ''
     
-     if st.button('Magic Price Predictor-gizmo'):
+    if st.button('Magic Price Predictor-gizmo'):
         output = np.array(price_prediction([postcode, bedroom_number, bathroom_number,
                                    price_per_unit, living_space, sqft]))
         st.success(round(output[0],2))
