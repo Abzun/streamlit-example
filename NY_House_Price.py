@@ -138,7 +138,7 @@ def main():
             st.dataframe(Li_homes(round(output[0],-4)))
 	
     st.sidebar.info('When you get a price predicted, youll also be given other addresses based off the price point')
-    st.info('To Do: Obviously to make it prettier, maybe compare learning models with different attributes. Im thinking of doing a simplier model to just do prediction based off of just Sqft')
+    st.error('To Do: Obviously to make it prettier, maybe compare learning models with different attributes. Im thinking of doing a simplier model to just do prediction based off of just Sqft - EDIT: I tried various permutations of features and none were as good as the main model here.')
     st.success('To Do: maybe just have options to see just LI houses. fitler panda  - completed')
     st.info('To Do: yesss')
 if __name__ == '__main__':
