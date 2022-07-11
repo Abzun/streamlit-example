@@ -13,7 +13,7 @@ import pickle
 import sklearn
 
 #loading Model
-loaded_model = pickle.load(open(r'C:\Users\Edwin\Downloads\ny_model_lm.sav','rb'))
+loaded_model = pickle.load(open('https://github.com/Abzun/streamlit-example/blob/master/ny_model_lm.sav','rb'))
 
 #loading in the data frame to usage 
 data_ny = pd.read_csv(r'C:\Users\Edwin\Downloads\zillow NY for-sale properties.csv')
