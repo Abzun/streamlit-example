@@ -11,21 +11,28 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pickle
 import sklearn
-
+import pydeck as pdk
+from scipy import stats
 #loading Model
-loaded_model = pickle.load(open('ny_model_lm.sav','rb'))
+
+loaded_model = pickle.load(open(r'C:\Users\Edwin\Downloads\ny_model_lm.sav','rb'))
 
 #loading in the data frame to usage 
-data_ny = pd.read_csv('https://raw.githubusercontent.com/Abzun/streamlit-example/master/zillow%20NY%20for-sale%20properties.csv')
+data_ny = pd.read_csv(r'C:\Users\Edwin\Downloads\zillow NY for-sale properties.csv')
 housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
                              ,'broker_id','property_status'
                              , 'year_build', 'total_num_units', 'listing_age'
                              ,'RunDate', 'agency_name', 'agent_name', 'agent_phone'
-                             ,'is_owned_by_zillow','state','property_type']) # unnecessary columns removed
+                             ,'is_owned_by_zillow','state']) # unnecessary columns removed
+
+housey = housey[~housey.isnull().any(axis=1)]   #  only have rows with no null or missing values. 
+ny = housey.copy()
+ny = ny[(np.abs(stats.zscore(ny['price'])) < 3)]
+
 #____________ZIPCODES _LONG ISLAND__________________________________________________________________
 
 lst = [11930.0, 11701.0, 11708.0, 11703.0,
-       11704.0, 11707.0, 11933.0, 11743.0, 11963.0, 11706.0, 11751.0, 11930.0,
+       11704.0, 11707.0, 11933.0, 11743.0, 11963.0, 11706.0, 11751.0, 11930.0,11520.0,
      11743.0, 11777.0, 11715.0, 11780.0, 11772.0, 11702.0, 11980.0, 11934.0,
      11722.0, 11749.0, 11760.0, 11782.0, 11724.0, 11743.0, 11770.0, 11768.0,
      11772.0, 11729.0, 11780.0, 11746.0, 11937.0, 11730.0, 11939.0, 11940.0,
@@ -68,14 +75,30 @@ lst = [11930.0, 11701.0, 11708.0, 11703.0,
 #function for using model
 
 #Long Island homes
+
 li_homes = housey[housey['postcode'].isin(lst)]
 
-def home_same_price(g):
+# g is an input being provided 
+
+def home_same_price(g): # house prices for all NY houses
     h = housey.loc[housey['price'] == g]
     return h
-def Li_homes(g):
-    h = li_homes.loc[li_homes['price'] == g]
+def ny_homes_price(price,df):
+    h = df[(price-100000 < df.price) & (df.price < price + 100000)]
     return h
+
+def Li_homes_price(price): # li house prices
+    h = li_homes[(price-50000 < li_homes.price) & (li_homes.price < price + 50000)]
+    return h
+
+def town_df(g):#Town df
+    h = li_homes[li_homes.postcode == g]
+    return h
+
+def town_price(price,df):# Town prices 
+    h = df[(price-50000 < df.price) & (df.price < price + 50000)]
+    return h
+
 
 def price_prediction(input_data):
     new_data = np.array(input_data, ndmin = 2)
@@ -86,31 +109,237 @@ def price_prediction(input_data):
     return prediction
 
 def main():
-    st.set_page_config(
+  
 
-         layout="wide",
-    
-     )
-    col1, col2 = st.columns(2)
-		
-    st.sidebar.title('NY House Prizing!!1 EXTRAVAGANZA ')
-    
     #INPUTS FROM USER
-    
-    postcode = st.sidebar.number_input('Enter Zipcode')
+    with st.sidebar:
+        st.title('NY House Form')
+        with st.form("house_form"):
+            postcode = st.number_input('Enter Zipcode',step = 1)
+            bedroom = st.slider('Enter Bedroom number', min_value = 1, max_value = 8, value = 2, step = 1)
+            bathroom = st.slider('Enter bathroom', min_value = 1, max_value = 5, value = 2, step = 1)
+            
+            price_per_unit = st.number_input('Enter something price per unit', min_value = 0,step = 1) 
+            living_space = st.number_input('Enter Living Space',min_value = 0,step = 1)
+            sqft = st.number_input('Enter SQFT of Property',min_value = 0,step = 1)
+            
+            radio = st.radio("Data Tabs", ('Dataframes', 'Graphs'))
+            st.form_submit_button("Submit")
+            st.info('Be sure to resubmit when switching tabs')
+    #INPUTS FROM USER
+            output = np.array(price_prediction([postcode, bedroom, bathroom,
+                                   price_per_unit, living_space, sqft]))
 
-    bedroom_number = st.sidebar.number_input('Enter Bedrooms')
-    bathroom_number = st.sidebar.number_input('Enter Bathroom')
-    price_per_unit = st.sidebar.number_input('Enter something price per unit') 
+
+	
+    
+    
+            
+    tab1, tab2, tab3 = st.tabs(["dataframe", "graphs", "sidebar info"])
+    if radio == 'Dataframes':
+        with tab1:
+         
+     
+            st.info('Price Prediction: ')
+            #output = np.array(price_prediction([postcode, bedroom, bathroom,
+             #                      price_per_unit, living_space, sqft]))
+	       
+            st.success(round(output[0],-3))
+            st.info('These are houses with the similar Price point, +/- $50,000')
+            st.dataframe(Li_homes_price(round(output[0],-4)))
+            st.info('These are homes in the same Town')
+            st.dataframe(town_price(round(output[0],-4), town_df(postcode) ))
+
+            xz = round(output[0],-4)
+            
+    if radio == 'Graphs':
+        
+        with tab2:
+              r = st.radio('Graph df', ('All of New York','House Price in Long Island','Local House Price'))
+              
+              if r == 'All of New York':
+                  dv = st.selectbox('Data Visiualization',('graph','map'))
+                  nyny = ny_homes_price(round(output[0],-4),ny)
+                  
+                  
+
+                  if dv == 'graph':
+                      
+                      fig = plt.figure(figsize=(10, 4)) 
+                      plt.title('Homes in the State of New York with similar price')
+                      sns.histplot(data =nyny.price)
+                      st.pyplot(fig)
+                         
+                      st.markdown('The above is a distribution of houses in Ny State. What we see is a there are hundreds of home for sale around our price point')
 
 
+
+
+                      fig1 = plt.figure(figsize=(10,4))
+                      sns.histplot(data = nyny.property_type)
+                      st.pyplot(fig1)
+                          
+                      st.markdown('For people that want to have multiple properties, this graph shows the types homes on sale. At this price point most of the homes are single family homes, and very little of the others.')
+
+
+
+
+                  elif dv== 'map':
+
+                      st.pydeck_chart(
+                             pdk.Deck(
+                             map_style='mapbox://styles/mapbox/light-v9',
+                             initial_view_state=pdk.ViewState(
+                                 latitude=40.7587,
+                                 longitude=-73.341426,
+                                 zoom=11,
+                             pitch=50, 
+                         ),
+                        layers=[
+                             pdk.Layer(
+                                'HexagonLayer',
+                                data=nyny,
+                                get_position='[longitude, latitude]',                    
+                                radius=250,
+                                elevation_scale=4,
+                                elevation_range=[0, 1000],
+                                pickable=True,
+                                extruded=True,
+                                auto_highlight = True,
+                                coverage = 1
+                             ),
+                            pdk.Layer(
+                                 'ScatterplotLayer',
+                                 data=nyny,
+                                 get_position='[longitude, latitude]',
+                                 get_color='[200, 30, 0, 160]',                    
+                                 get_radius=250,
+                             ),
+                         ],
+                     ))
+                      
+
+
+
+
+
+
+
+              elif r == 'House Price in Long Island':
+                  fig = plt.figure(figsize=(10, 4))
+                  
+                  mode_zip = list(li_homes.postcode.mode())
+                  count_zip = list(li_homes.postcode.value_counts())
+                  ny_mean = housey.price.mean()
+                  #ny_postcode = housey.post
+                  li_mean = li_homes.price.mean()
+                  df = Li_homes_price(round(output[0],-4))
+                  st.write('The average price seems to be:',int(round(ny_mean,-3)), ' ($) in Long Island')
+                  st.write('The zip code that has the most house for sale is:', mode_zip[0], 'with a', count_zip[0], 'houses')
+                  
+                  with plt.style.context('Solarize_Light2'):
+                      dv = st.selectbox('Data Visiualization',('histograph','map'))
+                      if dv == 'histograph': 
+                          plt.title('Homes in Long Island with similar price')
+                          sns.histplot(data =df.price)
+                          st.pyplot(fig)
+
+                      elif dv == 'map':
+                          st.pydeck_chart(pdk.Deck(
+                             map_style='mapbox://styles/mapbox/light-v9',
+                             initial_view_state=pdk.ViewState(
+                                 latitude=40.7587,
+                                 longitude=-73.341426,
+                                 zoom=11,
+                             pitch=50,
+                         ),
+                        layers=[
+                             pdk.Layer(
+                                'HexagonLayer',
+                                data=df,
+                                get_position='[longitude, latitude]',                    
+                                radius=200,
+                                elevation_scale=4,
+                                elevation_range=[0, 1000],
+                                pickable=True,
+                                extruded=True,
+                             ),
+                            pdk.Layer(
+                                 'ScatterplotLayer',
+                                 data=df,
+                                 get_position='[longitude, latitude]',
+                                 get_color='[200, 30, 0, 160]',                    
+                                 get_radius=200,
+                             ),
+                         ],
+                     ))
+                          
+
+
+              if r == 'Local House Price':
+                  dv = st.selectbox('Data Visiualization ',('violin graph', 'histograph','map'))
+
+                  my_town = town_df(postcode)
+                  my_price_town = town_price(round(output[0],-4), my_town )
+
+                  fig = plt.figure(figsize=(10, 4))
+                  x = data_ny[data_ny.postcode == postcode].city.unique()[0]
+                  
+                  
+                  with plt.style.context('Solarize_Light2'):
+                      if dv == 'histograph':
     
-    living_space = st.sidebar.number_input('Enter Living Space')
-    
- 
-    sqft = st.sidebar.number_input('Enter Sqft of Property')
-    
-    with col2:
+                          plt.title(str(x))
+                          sns.histplot(data = my_price_town.price)
+                          st.pyplot(fig)
+                          
+      
+                          
+                          
+                      if dv == 'violin graph':
+                          sns.set(font_scale = 2) # sets the font size
+                          fig1 = plt.figure(figsize=(20,10)) 
+                          sns.violinplot(data = my_price_town.price.values )
+                          st.pyplot(fig1)
+                      
+                      if dv == 'map':    
+                          st.pydeck_chart(pdk.Deck(
+                             map_style='mapbox://styles/mapbox/light-v9',
+                             initial_view_state=pdk.ViewState(
+                                 latitude=40.7587,
+                                 longitude=-73.341426,
+                                 zoom=11,
+                             pitch=50,
+                         ),
+                        layers=[
+                             pdk.Layer(
+                                'HexagonLayer',
+                                data=my_town,
+                                get_position='[longitude, latitude]',                    
+                                radius=100,
+                                elevation_scale=4,
+                                elevation_range=[0, 1000],
+                                pickable=True,
+                                extruded=True,
+                             ),
+                            pdk.Layer(
+                                 'ScatterplotLayer',
+                                 data=my_town,
+                                 get_position='[longitude, latitude]',
+                                 get_color='[200, 30, 0, 160]',                    
+                                 get_radius=100,
+                             ),
+                         ],
+                     ))
+
+
+
+
+
+
+
+
+    with tab3:
         st.write('**ZipCode** - Zipcode')
         st.write('___')
         st.write('**Bedroom** and **Bathroom** - how many rooms for each?')
@@ -123,23 +352,6 @@ def main():
         st.write('___')
         st.write('**SQFT** - size of the property')
         st.write('___')
-	
-    if st.sidebar.button('Magic Price Predictor-gizmo'):
-        with col1:
-            st.info('prediction magik is: ')
 
-            output = np.array(price_prediction([postcode, bedroom_number, bathroom_number,
-                                   price_per_unit, living_space, sqft]))
-            st.success(round(output[0],2))
-            st.info('These are houses with the similar Price point, I rounded to the nearest Ten Thousands')
-            st.dataframe(home_same_price(round(output[0],-4)))
-
-            st.info('These are homes in Long Island')
-            st.dataframe(Li_homes(round(output[0],-4)))
-	
-    st.sidebar.info('When you get a price predicted, youll also be given other addresses based off the price point')
-    st.error('To Do: Obviously to make it prettier, maybe compare learning models with different attributes. Im thinking of doing a simplier model to just do prediction based off of just Sqft - EDIT: I tried various permutations of features and none were as good as the main model here.')
-    st.success('To Do: maybe just have options to see just LI houses. fitler panda  - completed')
-    st.info('To Do: yesss')
 if __name__ == '__main__':
     main()
