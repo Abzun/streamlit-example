@@ -15,7 +15,7 @@ import pydeck as pdk
 from scipy import stats
 #loading Model
 
-loaded_model = pickle.load(open('ny_model_lm.sav'))
+loaded_model = pickle.load(ny_model_lm.sav)
 
 #loading in the data frame to usage 
 data_ny = pd.read_csv(r'C:\Users\Edwin\Downloads\zillow NY for-sale properties.csv')
