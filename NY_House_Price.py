@@ -21,7 +21,10 @@ loaded_model = joblib.load('ny_model_lm.sav')
 #loaded_model = pickle.load(open('https://raw.githubusercontent.com/Abzun/streamlit-example/blob/master/ny_model_lm.sav', 'rb'))
 
 #loading in the data frame to usage 
-data_ny = pd.read_csv(r'C:\Users\Edwin\Downloads\zillow NY for-sale properties.csv')
+url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow%20NY%20for-sale%20properties.csv'
+response = requests.get(url)
+
+data_ny = pd.read_csv(response.content)
 housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
                              ,'broker_id','property_status'
                              , 'year_build', 'total_num_units', 'listing_age'
