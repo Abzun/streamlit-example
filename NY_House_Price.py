@@ -11,12 +11,12 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pickle
 # import sklearn
+import joblib
 import pydeck as pdk
 from scipy import stats
 #loading Model
 
-with open('https://raw.githubusercontent.com/Abzun/streamlit-example/blob/master/ny_model_lm.sav', 'rb') as m:
-	loaded_model = pickle.load(m)
+loaded_model = joblib.load('ny_model_lm.sav')
 
 #loaded_model = pickle.load(open('https://raw.githubusercontent.com/Abzun/streamlit-example/blob/master/ny_model_lm.sav', 'rb'))
 
