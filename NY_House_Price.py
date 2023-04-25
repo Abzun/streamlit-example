@@ -15,6 +15,8 @@ import joblib
 import pydeck as pdk
 from scipy import stats
 import requests
+import io
+
 #loading Model
 
 loaded_model = joblib.load('ny_model_lm.sav')
@@ -23,9 +25,9 @@ loaded_model = joblib.load('ny_model_lm.sav')
 
 #loading in the data frame to usage 
 url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow%20NY%20for-sale%20properties.csv'
-response = requests.get(url)
+response = requests.get(url).content
 
-data_ny = pd.read_csv(response.content)
+data_ny = pd.read_csv(io.StringIO(responsedecode('utf-8')))
 housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
                              ,'broker_id','property_status'
                              , 'year_build', 'total_num_units', 'listing_age'
