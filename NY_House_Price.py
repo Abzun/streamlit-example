@@ -14,6 +14,7 @@ import sklearn
 import joblib
 import pydeck as pdk
 from scipy import stats
+import requests
 #loading Model
 
 loaded_model = joblib.load('ny_model_lm.sav')
