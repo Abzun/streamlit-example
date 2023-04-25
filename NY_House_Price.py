@@ -25,7 +25,13 @@ loaded_model = joblib.load('ny_model_lm.sav')
 
 #loading in the data frame to usage 
 url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow%20NY%20for-sale%20properties.csv'
-response = requests.get(url).content
+response = requests.get(url)
+
+if response.status_code != 200:
+    st.error(f"Failed to load data from {url}")
+else:
+    data = pd.read_csv(response.content)
+    st.dataframe(data)
 
 data_ny = pd.read_csv(io.StringIO(responsedecode('utf-8')))
 housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
