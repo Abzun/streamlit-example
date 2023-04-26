@@ -24,7 +24,7 @@ loaded_model = joblib.load('ny_model_lm.sav')
 #loaded_model = pickle.load(open('https://raw.githubusercontent.com/Abzun/streamlit-example/blob/master/ny_model_lm.sav', 'rb'))
 
 #loading in the data frame to usage 
-url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow%20NY%20for-sale%20properties.csv'
+url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow.csv'
 
 
 data_ny = pd.read_csv(url)
