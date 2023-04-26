@@ -28,14 +28,8 @@ url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow%
 
 
 data_ny = pd.read_csv(url)
-housey = data_ny.drop(columns = ['property_url','property_id', 'apartment'
-                             ,'broker_id','property_status'
-                             , 'year_build', 'total_num_units', 'listing_age'
-                             ,'RunDate', 'agency_name', 'agent_name', 'agent_phone'
-                             ,'is_owned_by_zillow','state']) # unnecessary columns removed
 
-housey = housey[~housey.isnull().any(axis=1)]   #  only have rows with no null or missing values. 
-ny = housey.copy()
+ny = data_ny.copy()
 ny = ny[(np.abs(stats.zscore(ny['price'])) < 3)]
 
 #____________ZIPCODES _LONG ISLAND__________________________________________________________________
