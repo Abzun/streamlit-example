@@ -26,7 +26,6 @@ loaded_model = joblib.load('ny_model_lm.sav')
 #loading in the data frame to usage 
 url = 'https://raw.githubusercontent/Abzun/streamlit-example/blob/master/zillow.csv'
 
-
 data_ny = pd.read_csv(url)
 
 ny = data_ny.copy()
